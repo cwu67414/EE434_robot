@@ -7,5 +7,5 @@ for index in range(4):  # Try indices from 0 to 3 (or higher if needed)
     else:
         print(f"Camera {index} is available")
 cap.release()  # Release the camera
-break  # Exit loop if a camera is found
+
     
