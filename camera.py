@@ -1,49 +1,33 @@
 import cv2
-#print(cv2.__version__)
 
-cap = cv2.VideoCapture("nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink")
+# Initialize the camera capture
+left_camera = cv2.VideoCapture(0)  # Assuming left camera is index 0
+right_camera = cv2.VideoCapture(1)  # Assuming right camera is index 1
 
-# Function to detect circles in the frame
-def detect_circles(frame):
-    # Convert the frame to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+# Set camera properties
+# Adjust these parameters according to your camera specifications
+left_camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+left_camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+right_camera.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+right_camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    # Apply Gaussian blur to reduce noise
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-
-    # Apply Hough Circle Transform
-    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, dp=1, minDist=20,
-                               param1=50, param2=30, minRadius=10, maxRadius=100)
-
-    # Draw circles on the frame
-    if circles is not None:
-        circles = circles[0]  # Convert to numpy array
-        circles = circles.round().astype("int")  # Round the circle parameters
-        for (x, y, r) in circles:
-            # Draw the circle and its center
-            cv2.circle(frame, (x, y), r, (0, 255, 0), 4)
-            cv2.circle(frame, (x, y), 2, (0, 0, 255), 3)
-
-# Main loop for capturing frames and processing circles
 while True:
-    # Capture frame from the camera
-    ret, frame = cap.read()
+    # Capture frames from the left and right cameras
+    _, left_frame = left_camera.read()
+    _, right_frame = right_camera.read()
 
-    # Check if frame is captured successfully
-    if not ret:
-        print("Error: Failed to capture frame")
-        break
+    # Perform stereo vision processing here if needed
+    # For example, calculate disparity map using stereo matching algorithms
 
-    # Perform circle detection
-    detect_circles(frame)
-
-    # Display the resulting frame
-    cv2.imshow('Frame', frame)
+    # Display stereo frames
+    cv2.imshow('Left Camera', left_frame)
+    cv2.imshow('Right Camera', right_frame)
 
     # Break the loop on 'q' key press
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Release the camera and close OpenCV windows
-cap.release()
+# Release the camera resources
+left_camera.release()
+right_camera.release()
 cv2.destroyAllWindows()
