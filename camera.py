@@ -1,11 +1,24 @@
 import cv2
 
-for index in range(4):  # Try indices from 0 to 3 (or higher if needed)
-    cap = cv2.VideoCapture(index)
-    if not cap.isOpened():
-        print(f"Camera {index} not available")
-    else:
-        print(f"Camera {index} is available")
-cap.release()  # Release the camera
+# Initialize camera capture
+cap = cv2.VideoCapture(0)  # Use index 0 for the first camera
 
-    
+while True:
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+
+    # Check if the frame was successfully captured
+    if not ret:
+        print("Error: Failed to capture frame")
+        break
+
+    # Display the frame
+    cv2.imshow('Frame', frame)
+
+    # Check for key press
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the camera and close OpenCV windows
+cap.release()
+cv2.destroyAllWindows()
