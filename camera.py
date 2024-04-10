@@ -1,25 +1,24 @@
 import cv2
 
 # Initialize camera capture
-cap = cv2.VideoCapture("nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink")
+cap_left = cv2.VideoCapture(0)
+cap_right = cv2.VideoCapture(1)
 
 while True:
 
-    # Capture frame-by-frame
-    ret, frame = cap.read()
+    ret_left, frame_left = cap_left.read()
+    ret_right, frame_right = cap_right.read()
 
-    # Check if the frame was successfully captured
-    if not ret:
-        print("Error: Failed to capture frame")
+    if not ret_left or not ret_right:
+        print("Error: Failed to capture frame from one or both cameras")
         break
 
-    # Display the frame
-    cv2.imshow('Frame', frame)
+     cv2.imshow('Left Frame', frame_left)
+    cv2.imshow('Right Frame', frame_right)
 
-    # Check for key press
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Release the camera and close OpenCV windows
-cap.release()
+cap_left.release()
+cap_right.release()
 cv2.destroyAllWindows()
