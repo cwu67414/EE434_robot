@@ -11,7 +11,7 @@ def convert_to_angles(a, b, c):
         return None
     angle1 = math.atan2(a, b) * (180 / math.pi)
     angle2 = math.atan2(c, b) + math.acos(math.sqrt(b**2 + c**2) / (2 * arm_length))
-    angle3 = 2 * angle2 - 180
+    angle3 = - 2 * angle2
     
     return angle1, angle2, angle3
 
