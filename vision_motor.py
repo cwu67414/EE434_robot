@@ -1,5 +1,7 @@
+import cv2
 import subprocess
 import math
+import signal
 
 arm_length = 17
 
@@ -19,8 +21,10 @@ proc0 = subprocess.Popen(cmd0, shell=True)
 proc1 = subprocess.Popen(cmd1, shell=True)
 
 try:
-    
     while True:
+        # Read frames from the OpenCV capture objects
+        ret0, frame0 = cap0.read()
+        ret1, frame1 = cap1.read()
 
         x0, y0, z0 = 10, 20, 30
         x1, y1, z1 = 15, 25, 35
@@ -30,10 +34,16 @@ try:
         print("Angle 2:", angles[1])
         print("Angle 3:", angles[2])
 
-        if input("Press 'q' to quit: ").lower() == 'q':
+        cv2.imshow('Frame0', frame0)
+        cv2.imshow('Frame1', frame1)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-    
-finally:    
+
+finally:
     # Terminate the subprocesses
     proc0.terminate()
     proc1.terminate()
+
+    # Close OpenCV windows
+    cv2.destroyAllWindows()
