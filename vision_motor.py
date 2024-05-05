@@ -6,6 +6,9 @@ import signal
 arm_length = 17
 
 def convert_to_angles(a, b, c):
+    if math.sqrt(b**2 + a**2) > 2 * arm_length or math.sqrt(a**2 + c**2) > 2 * arm_length:
+        print("Object is too far away from the arm.")
+        return None
     angle1 = math.atan2(a, b) * (180 / math.pi)
     angle2 = math.atan2(c, b) + math.acos(math.sqrt(b**2 + c**2) / (2 * arm_length))
     angle3 = 2 * angle2 - 180
