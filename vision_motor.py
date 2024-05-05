@@ -26,8 +26,8 @@ proc1 = subprocess.Popen(cmd1, shell=True)
 try:
     while True:
 
-        x0, y0, z0 = 10, 20, 30
-        x1, y1, z1 = 15, 25, 35
+        x0, y0, z0 = 3, 4, 5
+        x1, y1, z1 = 3, 4, 5
 
         angles = convert_to_angles((x0+x1)/2, (y0+y1)/2, (z0+z1)/2)
         print("Angle 1:", angles[0])
