@@ -1,4 +1,5 @@
 import cv2
+import subprocess
 import math
 
 arm_length = 17
@@ -10,12 +11,16 @@ def convert_to_angles(a, b, c):
     
     return angle1, angle2, angle3
 
-# Initialize camera capture
-cap0 = cv2.VideoCapture("nvarguscamerasrc sensor_id=0 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink")
-cap1 = cv2.VideoCapture("nvarguscamerasrc sensor_id=1 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink")
+# Run GStreamer command to capture video
+cmd0 = "gst-launch-1.0 nvarguscamerasrc sensor_id=0 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
+cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
+
+# Open subprocesses to run the commands
+proc0 = subprocess.Popen(cmd0, shell=True)
+proc1 = subprocess.Popen(cmd1, shell=True)
 
 while True:
-
+    # Read frames from the OpenCV capture objects
     ret0, frame0 = cap0.read()
     ret1, frame1 = cap1.read()
 
@@ -33,12 +38,8 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-cap0.release()
-cap1.release()
+# Terminate the subprocesses
+proc0.terminate()
+proc1.terminate()
+
 cv2.destroyAllWindows()
-
-
-gst-launch-1.0 nvarguscamerasrc sensor_id=0 ! \
-   'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! \
-   nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! \
-   nvvidconv ! nvegltransform ! nveglglessink -e
