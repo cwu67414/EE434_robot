@@ -18,18 +18,21 @@ cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),
 proc0 = subprocess.Popen(cmd0, shell=True)
 proc1 = subprocess.Popen(cmd1, shell=True)
 
-while True:
+try:
+    
+    while True:
 
-    x0, y0, z0 = 10, 20, 30
-    x1, y1, z1 = 15, 25, 35
+        x0, y0, z0 = 10, 20, 30
+        x1, y1, z1 = 15, 25, 35
 
-    angles = convert_to_angles((x0+x1)/2, (y0+y1)/2, (z0+z1)/2)
-    print("Angle 1:", angles[0])
-    print("Angle 2:", angles[1])
-    print("Angle 3:", angles[2])
+        angles = convert_to_angles((x0+x1)/2, (y0+y1)/2, (z0+z1)/2)
+        print("Angle 1:", angles[0])
+        print("Angle 2:", angles[1])
+        print("Angle 3:", angles[2])
 
-    if input("Press 'q' to quit: ").lower() == 'q':
+        if input("Press 'q' to quit: ").lower() == 'q':
             break
+    
 finally:    
     # Terminate the subprocesses
     proc0.terminate()
