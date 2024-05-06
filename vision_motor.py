@@ -20,14 +20,14 @@ def convert_to_angles(a, b, c):
 # cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
 
 # Define the GStreamer pipeline for sensor_id=0
-cmd0 = "nvarguscamerasrc sensor_id=0 ! video/x-raw(memory:NVMM),width=1920,height=1080,format=NV12,framerate=30/1 ! nvvidconv ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw,format=BGR ! appsink"
+cmd0 = "nvarguscamerasrc sensor_id=0 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink"
 
 # Define the GStreamer pipeline for sensor_id=1
-cmd1 = "nvarguscamerasrc sensor_id=1 ! video/x-raw(memory:NVMM),width=1920,height=1080,format=NV12,framerate=30/1 ! nvvidconv ! video/x-raw,format=BGRx ! videoconvert ! video/x-raw,format=BGR ! appsink"
+cmd1 = "nvarguscamerasrc sensor_id=1 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink"
 
 # Open subprocesses to run the commands
-proc0 = subprocess.Popen(cmd0, stdout=subprocess.PIPE, shell=True)
-proc1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, shell=True)
+#proc0 = subprocess.Popen(cmd0, stdout=subprocess.PIPE, shell=True)
+#proc1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, shell=True)
 
 # Create OpenCV VideoCapture objects for sensor_id=0 and sensor_id=1
 cap0 = cv2.VideoCapture(cmd0, cv2.CAP_GSTREAMER)
