@@ -39,7 +39,7 @@ def detect_object(frame):
     
 try:
     while True:
-
+        print("Enter the loop.")
         ret0, frame0 = proc0.stdout.read(), proc1.stdout.read()
         ret1, frame1 = proc0.stdout.read(), proc1.stdout.read()
 
