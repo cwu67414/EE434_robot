@@ -16,24 +16,18 @@ def convert_to_angles(a, b, c):
     return angle1, angle2, angle3
 
 # Run GStreamer command to capture video
-# cmd0 = "gst-launch-1.0 nvarguscamerasrc sensor_id=0 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
-# cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
-
-# Define the GStreamer pipeline for sensor_id=0
-cmd0 = "nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink"
-
-# Define the GStreamer pipeline for sensor_id=1
-#cmd1 = "nvarguscamerasrc sensor_id=1 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink"
+cmd0 = "gst-launch-1.0 nvarguscamerasrc sensor_id=0 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
+cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e"
 
 # Open subprocesses to run the commands
-#proc0 = subprocess.Popen(cmd0, stdout=subprocess.PIPE, shell=True)
-#proc1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, shell=True)
+proc0 = subprocess.Popen(cmd0, stdout=subprocess.PIPE, shell=True)
+proc1 = subprocess.Popen(cmd1, stdout=subprocess.PIPE, shell=True)
 
-# Create OpenCV VideoCapture objects for sensor_id=0 and sensor_id=1
-cap0 = cv2.VideoCapture(cmd0, cv2.CAP_GSTREAMER)
-#cap1 = cv2.VideoCapture(cmd1, cv2.CAP_GSTREAMER)
+# Create VideoCapture objects for reading the video frames
+cap0 = cv2.VideoCapture(f'describe:appsink', cv2.CAP_GSTREAMER)
+cap1 = cv2.VideoCapture(f'describe:appsink', cv2.CAP_GSTREAMER)
 
-# Check if the VideoCapture objects were opened successfully
+# Check if VideoCapture objects were opened successfully
 if not cap0.isOpened() or not cap1.isOpened():
     print("Error: Unable to open VideoCapture.")
     exit()
@@ -52,12 +46,6 @@ def detect_object(frame):
     else:
         print("Didn't detect the object.")
         return None
-
-
-# Check if the VideoCapture objects were opened successfully
-if not cap0.isOpened() or not cap1.isOpened():
-    print("Error: Unable to open VideoCapture.")
-    exit()
 
 try:
     while True:
