@@ -44,6 +44,7 @@ try:
         ret1, frame1 = proc0.stdout.read(), proc1.stdout.read()
 
         if ret0 and ret1:
+            print("Have the videos.")
             # Convert the byte data to numpy array
             frame0 = cv2.imdecode(np.frombuffer(frame0, np.uint8), -1)
             frame1 = cv2.imdecode(np.frombuffer(frame1, np.uint8), -1)
