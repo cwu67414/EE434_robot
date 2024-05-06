@@ -1,7 +1,7 @@
 import subprocess
 import math
 import cv2
-import signal
+import numpy as np
 
 arm_length = 17
 
@@ -23,23 +23,46 @@ cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),
 proc0 = subprocess.Popen(cmd0, shell=True)
 proc1 = subprocess.Popen(cmd1, shell=True)
 
+def detect_object(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    _, thresholded = cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(thresholded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if contours:
+        largest_contour = max(contours, key=cv2.contourArea)
+        M = cv2.moments(largest_contour)
+        cx = int(M['m10'] / M['m00'])
+        cy = int(M['m01'] / M['m00'])
+        return cx, cy
+    else:
+        return None
+    
 try:
     while True:
 
-        x0, y0, z0 = 3, 4, 5
-        x1, y1, z1 = 3, 4, 5
+        ret0, frame0 = proc0.stdout.read(), proc1.stdout.read()
+        ret1, frame1 = proc0.stdout.read(), proc1.stdout.read()
 
-        angles = convert_to_angles((x0+x1)/2, (y0+y1)/2, (z0+z1)/2)
-        print("Angle 1:", angles[0])
-        print("Angle 2:", angles[1])
-        print("Angle 3:", angles[2])
-
-        # Check for keyboard input to quit
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            # Send SIGINT signal to subprocesses to emulate Ctrl+C behavior
-            proc0.send_signal(signal.SIGINT)
-            proc1.send_signal(signal.SIGINT)
-            break
+        if ret0 and ret1:
+            # Convert the byte data to numpy array
+            frame0 = cv2.imdecode(np.frombuffer(frame0, np.uint8), -1)
+            frame1 = cv2.imdecode(np.frombuffer(frame1, np.uint8), -1)
+            
+            # Detect object coordinates in each frame
+            object_coords0 = detect_object(frame0)
+            object_coords1 = detect_object(frame1)
+            
+            if object_coords0 and object_coords1:
+                # Calculate the average coordinates from both sensors
+                avg_coords = ((object_coords0[0] + object_coords1[0]) / 2, 
+                              (object_coords0[1] + object_coords1[1]) / 2, 
+                              0)
+                
+                # Convert object coordinates to angles
+                angles = convert_to_angles(avg_coords[0], avg_coords[1], avg_coords[2])
+                if angles is not None:
+                    print("Angle 1:", angles[0])
+                    print("Angle 2:", angles[1])
+                    print("Angle 3:", angles[2])
 
 finally:
     # Wait for the subprocesses to terminate
