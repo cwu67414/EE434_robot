@@ -16,12 +16,12 @@ def convert_to_angles(a, b, c):
     return angle1, angle2, angle3
 
 # Run GStreamer command to capture video
-cmd0 = "gst-launch-1.0 nvarguscamerasrc sensor_id=0 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e filesink location=output_left.mp4"
-cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e filesink location=output_right.mp4"
+# cmd0 = "gst-launch-1.0 nvarguscamerasrc sensor_id=0 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e filesink location=output_left.mp4"
+# cmd1 = "gst-launch-1.0 nvarguscamerasrc sensor_id=1 ! 'video/x-raw(memory:NVMM),width=1920, height=1080, framerate=30/1' ! nvvidconv flip-method=0 ! 'video/x-raw,width=960, height=540' ! nvvidconv ! nvegltransform ! nveglglessink -e filesink location=output_right.mp4"
 
 # Open subprocesses to run the commands
-proc0 = subprocess.Popen(cmd0, shell=True)
-proc1 = subprocess.Popen(cmd1, shell=True)
+# proc0 = subprocess.Popen(cmd0, shell=True)
+# proc1 = subprocess.Popen(cmd1, shell=True)
 
 def detect_object(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -40,8 +40,11 @@ def detect_object(frame):
 try:
     while True:
         print("Enter the loop.")
-        ret0, frame0 = proc0.stderr.read(), proc0.stderr.read()
-        ret1, frame1 = proc1.stderr.read(), proc1.stderr.read()
+        cap0 = cv2.VideoCapture(0)
+        cap1 = cv2.VideoCapture(1)
+
+        ret0, frame0 = cap0.read()
+        ret1, frame1 = cap1.read()
 
         if ret0 and ret1:
             print("Have the videos.")
