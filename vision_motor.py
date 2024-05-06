@@ -25,7 +25,7 @@ proc1 = subprocess.Popen(cmd1, shell=True)
 
 def detect_object(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    _, thresholded = cv2.threshold(gray, 10, 255, cv2.THRESH_BINARY)
+    _, thresholded = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
     contours, _ = cv2.findContours(thresholded, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if contours:
         largest_contour = max(contours, key=cv2.contourArea)
@@ -34,6 +34,7 @@ def detect_object(frame):
         cy = int(M['m01'] / M['m00'])
         return cx, cy
     else:
+        print("Didn't detect the object.")
         return None
     
 try:
