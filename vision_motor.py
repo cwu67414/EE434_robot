@@ -40,8 +40,8 @@ def detect_object(frame):
 try:
     while True:
         print("Enter the loop.")
-        ret0, frame0 = proc0.stdout.read(), proc0.stdout.read()
-        ret1, frame1 = proc1.stdout.read(), proc1.stdout.read()
+        ret0, frame0 = proc0.stderr.read(), proc0.stderr.read()
+        ret1, frame1 = proc1.stderr.read(), proc1.stderr.read()
 
         if ret0 and ret1:
             print("Have the videos.")
